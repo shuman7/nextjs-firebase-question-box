@@ -44,6 +44,23 @@ export default function UserShow() {
           <div className="m-5">{user.name}さんに質問しよう！</div>
         </div>
       )}
+        <div className="row justify-content-center mb-3">
+          <div className="col-12 col-md-6">
+          <form>
+              <textarea 
+                className="form-control"
+                placeholder="お元気ですか?"
+                rows={6}
+                required
+                ></textarea>
+                <div className="m-3">
+                  <button type='submit' className='btn btn-primary'>
+                    質問を送信する
+                  </button>
+                </div>
+          </form>  
+          </div>
+        </div>
     </Layout>
   )
 }

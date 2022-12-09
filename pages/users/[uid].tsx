@@ -1,23 +1,57 @@
-import { collection, doc, getDoc, getFirestore } from 'firebase/firestore'
+import { 
+  addDoc,
+  collection, 
+  doc, 
+  getDoc, 
+  getFirestore, 
+  serverTimestamp,
+} from "firebase/firestore"
 import { getMiddlewareRouteMatcher } from 'next/dist/shared/lib/router/utils/middleware-route-matcher'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
+import { useAuthentication } from '../../hooks/authentication'
 import { User } from '../../models/User'
+
 
 type Query = {
   uid: string
 }
 
 export default function UserShow() {
+  const db = getFirestore()
   const [user, setUser] = useState<User>(null)
   const router = useRouter()
   const query = router.query as Query
+  
+  const {user: currentUser} = useAuthentication()
+  const [body, setBody] = useState('')
+  const [isSending, setIsSending] = useState(false)
+
+
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+
+    setIsSending(true)
+    await addDoc(collection(db, 'questions'), {
+      senderUid: currentUser.uid,
+      receiverUid: user.uid,
+      body,
+      isReplied: false,
+      createdAt: serverTimestamp(),
+    })
+    setIsSending(false)
+
+    setBody('')
+    alert('質問を送信しました。')
+  }
 
   useEffect(() => {
     if(query.uid === undefined) {
       return
     }
+  }, [query.uid])
     async function loadUser() {
       console.log(query)
       const db = getFirestore()
@@ -34,7 +68,7 @@ export default function UserShow() {
       setUser(gotUser)
     }
     loadUser()
-  }, [query.uid])
+  
 
   return (
     <Layout>
@@ -46,17 +80,25 @@ export default function UserShow() {
       )}
         <div className="row justify-content-center mb-3">
           <div className="col-12 col-md-6">
-          <form>
+          <form onSubmit={onSubmit}>
               <textarea 
                 className="form-control"
                 placeholder="お元気ですか?"
                 rows={6}
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
                 required
                 ></textarea>
                 <div className="m-3">
+                  {isSending ? (
+                    <div className="spinnter-border text-secondary" role="stateus">
+                      <span className='visually-hidden'>Locading...</span>
+                    </div>
+                  ) : (
                   <button type='submit' className='btn btn-primary'>
                     質問を送信する
                   </button>
+                  )}
                 </div>
           </form>  
           </div>

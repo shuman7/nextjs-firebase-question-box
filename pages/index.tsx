@@ -19,10 +19,19 @@ export default function Home() {
 
         <main className={styles.main}>
           <p>{user?.uid || '未ログイン'}</p>
-          
-          <Link href={`/users/${user.uid}`}>
-            {user.uid}ぺーじへ遷移する
-          </Link>
+
+          { user ? (
+              <Link href={`/users/${user.uid}`}>
+                {user.uid}ぺーじへ遷移する
+              </Link>
+            ) : (
+              <p>未ログイン</p>
+            )
+          }
+
+          {/* <Link href={`/users/${user.uid}`}>
+            {user?.uid}ぺーじへ遷移する
+          </Link> */}
         </main>
         
         <Link href="/page2">Go to Page2</Link>

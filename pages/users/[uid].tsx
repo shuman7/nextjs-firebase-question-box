@@ -12,6 +12,7 @@ import React, { FormEvent, useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
 import { useAuthentication } from '../../hooks/authentication'
 import { User } from '../../models/User'
+import { toast } from 'react-toastify';
 
 
 type Query = {
@@ -19,7 +20,6 @@ type Query = {
 }
 
 export default function UserShow() {
-  const db = getFirestore()
   const [user, setUser] = useState<User>(null)
   const router = useRouter()
   const query = router.query as Query
@@ -27,11 +27,12 @@ export default function UserShow() {
   const {user: currentUser} = useAuthentication()
   const [body, setBody] = useState('')
   const [isSending, setIsSending] = useState(false)
-
-
+  
+  
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
+    const db = getFirestore()
 
     setIsSending(true)
     await addDoc(collection(db, 'questions'), {
@@ -44,14 +45,22 @@ export default function UserShow() {
     setIsSending(false)
 
     setBody('')
-    alert('質問を送信しました。')
+    // alert('質問を送信しました。')
+    toast.success('質問を送信しました。', {
+      position: 'bottom-left',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    })
   }
 
   useEffect(() => {
     if(query.uid === undefined) {
       return
     }
-  }, [query.uid])
     async function loadUser() {
       console.log(query)
       const db = getFirestore()
@@ -68,6 +77,7 @@ export default function UserShow() {
       setUser(gotUser)
     }
     loadUser()
+  }, [query.uid])
   
 
   return (

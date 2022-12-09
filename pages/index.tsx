@@ -21,9 +21,12 @@ export default function Home() {
           <p>{user?.uid || '未ログイン'}</p>
 
           { user ? (
-              <Link href={`/users/${user.uid}`}>
-                {user.uid}ぺーじへ遷移する
-              </Link>
+                <>
+                  {user.uid}
+                  <Link href={`/users/${user.uid}`}>
+                    {user.uid}ぺーじへ遷移する
+                  </Link>
+                </>
             ) : (
               <p>未ログイン</p>
             )

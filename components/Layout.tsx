@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ToastContainer } from "react-toastify";
 
 export default function Layout({ children }) {
     return (
@@ -21,6 +22,7 @@ export default function Layout({ children }) {
           </div>
         </nav>
         <div className="container">{children}</div>
+        <ToastContainer />
       </div>
     )
   }
